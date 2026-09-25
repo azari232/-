@@ -1,0 +1,79 @@
+#задание 1
+cels = 3
+faren = (cels * 9 / 5) + 32
+kelvin = cels + 273.15
+
+print(f"{cels} градуса цельсия = {faren:.2f} форенгейта")
+print(f"{cels} градуса цельсия = {kelvin:.2f} кельвина")
+
+
+
+
+#задание 2
+chisl = int(input())
+if chisl % 2 == 0:
+    print('четное')
+else:
+    print('нечетное')
+
+if chisl > 0:
+    print('положительное')
+elif chisl == 0:
+    print('это так то ноль')
+else:
+    print('число отрицательное')
+
+if 10 <= chisl <= 50:
+    print('да в диапазоне')
+else:
+    print('увы но нет')
+
+
+
+#задание 3
+import random
+
+b = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+c = "0123456789"
+z = "!@#$%^&*"
+
+a1 = random.choice(b)
+a2 = random.choice(b)
+a3 = random.choice(b)
+a4 = random.choice(c)
+a5 = random.choice(c)
+a6 = random.choice(c)
+a7 = random.choice(z)
+a8 = random.choice(z)
+
+parol = a1 + a2 + a3 + a4 + a5 + a6 + a7 + a8
+
+print(parol)
+
+
+
+
+#задание 4
+from collections import Counter
+
+t = input().lower()
+c = Counter(t)
+
+print("3 самых частых символа:")
+for s, co in c.most_common(3):
+    print(s, co)
+
+
+
+
+
+#задание 5
+def F(n):
+    pr = [True] * (n + 1)
+    pr[0] = pr[1] = False
+    for p in range(2, int(n ** 0.5) + 1):
+        if pr[p]:
+            for i in range(p * p, n + 1, p):
+                pr[i] = False
+    return [i for i, prime in enumerate(pr) if prime]
+print(F(100))  
