@@ -1,0 +1,380 @@
+#код для заданий 1-4
+import datetime
+
+class Book:
+    def __init__(self, title, author, year):
+        self.title = title
+        self.author = author
+        self.year = int(year)
+
+    def info(self):
+        return f"книга - {self.title}, автор - {self.author}, год - {self.year}"
+
+    def __str__(self):
+        return f"книга - {self.title}, автор - {self.author}, год - {self.year}"
+
+    def __eq__(self, other):
+        if not isinstance(other, Book):
+            return False
+        return self.title == other.title and self.author == other.author and self.year == other.year
+
+    @property
+    def age(self):
+        return datetime.date.today().year - self.year
+
+    @classmethod
+    def from_string(cls, book_str):
+        title, author, year = map(str.strip, book_str.split(","))
+        return cls(title, author, year)
+
+class EBook(Book):
+    def __init__(self, title, author, year, tipe):
+        super().__init__(title, author, year)
+        self.tipe = tipe
+
+    def info(self):
+        return f"{super().info()}, тип - {self.tipe}"
+
+
+book_1 = EBook(title="негритания", author="кто то там", year="12789", tipe="электронная")
+book_2 = Book(title="негритания", author="кто то там", year="12789")
+
+print(book_1.info())
+print(book_2.info())
+
+print(book_2)
+print(book_2.age)
+
+book_from_str = Book.from_string("негритания, кто то там, 12789")
+print(book_2 == book_from_str)
+
+
+
+#практика 1
+class Employee:
+    def __init__(self, id, name, base_money):
+        self.id = id
+        self.name = name
+        self.base_money = base_money
+
+    def calculate_salaries(self):
+        return self.base_money
+
+class Manager(Employee):
+    def __init__(self, id, name, base_money, bonus):
+        super().__init__(id, name, base_money)
+        self.bonus = bonus
+
+    def calculate_salaries(self):
+        return self.base_money + self.bonus
+
+class Developer(Employee):
+    def __init__(self, id, name, base_money, project_sum):
+        super().__init__(id, name, base_money)
+        self.project_sum = project_sum
+
+    def calculate_salaries(self):
+        return self.base_money + self.project_sum
+
+
+emp = Employee(1, "Иван", 5_000_000_000)
+mgr = Manager(2, "Елена", 70_000, 15_000)
+dev = Developer(3, "Алексей", 60_000, 25_000)
+
+print(f"Зарплата сотрудника {emp.name}: {emp.calculate_salaries()} потому что он крутой")
+print(f"Зарплата менеджера {mgr.name}: {mgr.calculate_salaries()}")
+print(f"Зарплата разработчика {dev.name}: {dev.calculate_salaries()}")
+
+
+
+
+
+
+
+#практика 2
+class Vehicle:
+    def __init__(self, brand, model, is_beautiful=False):
+        self.brand = brand
+        self.model = model
+        self.is_beautiful = is_beautiful
+
+    def get_description(self):
+        beauty_status = "красивый" if self.is_beautiful else "некрасивый"
+        return f"Транспортное средство: {self.brand} {self.model}, статус - {beauty_status}"
+
+class Car(Vehicle):
+    def __init__(self, brand, model, doors, is_beautiful=False):
+        super().__init__(brand, model, is_beautiful)
+        self.doors = doors
+
+    def get_description(self):
+        beauty_status = "красивый" if self.is_beautiful else "некрасивый"
+        return f"Автомобиль: {self.brand} {self.model}, статус - {beauty_status}, количество дверей: {self.doors}"
+
+class Motorcycle(Vehicle):
+    def __init__(self, brand, model, engine_capacity, acceleration_to_100, is_beautiful=False):
+        super().__init__(brand, model, is_beautiful)
+        self.engine_capacity = engine_capacity
+        self.acceleration_to_100 = acceleration_to_100
+
+    def get_description(self):
+        beauty_status = "красивый" if self.is_beautiful else "некрасивый"
+        return (f"Мотоцикл: {self.brand} {self.model}, статус - {beauty_status}, объем двигателя: "
+                f"{self.engine_capacity} куб. см, разгон с нуля до ста за: {self.acceleration_to_100} сек")
+
+class Boat(Vehicle):
+    def __init__(self, brand, model, length, capacity, is_beautiful=False):
+        super().__init__(brand, model, is_beautiful)
+        self.length = length
+        self.capacity = capacity
+
+    def get_description(self):
+        beauty_status = "красивый" if self.is_beautiful else "некрасивый"
+        return (f"Лодка: {self.brand} {self.model}, статус - {beauty_status}, длина: {self.length} м, /"
+                f"грузоподъемность: {self.capacity} кг")
+
+
+vehicles = [
+    Car("Toyota", "Camry 3.5", 4, is_beautiful=False),
+    Motorcycle("Yamaha", "YZF-R1", 998, 2.6, is_beautiful=True),
+    Boat("Yamaha", "242X", 7, 800, is_beautiful=False)
+]
+
+for vehicle in vehicles:
+    print(vehicle.get_description())
+
+
+
+
+
+
+#практика 3
+class Product:
+    # Класс для описания товара
+    def __init__(self, name, price, stock, category):
+        self.name = name
+        self.price = price
+        self.stock = stock
+        self.category = category
+
+    def __str__(self):
+        return f"{self.name} ({self.category}) - {self.price} руб. (В наличии: {self.stock})"
+
+    def reduce_stock(self, quantity):
+        # Уменьшает количество товара на складе
+        if self.stock >= quantity:
+            self.stock -= quantity
+            return True
+        return False
+
+
+class ShoppingCart:
+    # Класс корзины покупателя
+    def __init__(self):
+        self.items = {} 
+
+    def add_item(self, product, quantity=1):
+        # Добавляет товар в корзину
+        if product.stock >= quantity:
+            self.items[product] = self.items.get(product, 0) + quantity
+            print(f"Товар '{product.name}' добавлен в корзину (x{quantity}).")
+        else:
+            print(f"Недостаточно товара '{product.name}' на складе.")
+
+    def remove_item(self, product):
+        # Удаляет товар из корзины
+        if product in self.items:
+            del self.items[product]
+            print(f"Товар '{product.name}' удален из корзины.")
+        else:
+            print(f"Товара '{product.name}' нет в корзине.")
+
+    def update_quantity(self, product, quantity):
+        # Обновляет количество товара в корзине
+        if product in self.items:
+            if product.stock >= quantity:
+                self.items[product] = quantity
+                print(f"Количество товара '{product.name}' обновлено до {quantity}.")
+            else:
+                print(f"Недостаточно товара '{product.name}' на складе для обновления.")
+        else:
+            print(f"Товара '{product.name}' нет в корзине. Сначала добавьте его.")
+
+    def get_subtotal(self):
+        # Считает общую стоимость товаров в корзине без скидок и налогов
+        return sum(product.price * qty for product, qty in self.items.items())
+
+    def clear(self):
+        # Очищает корзину после оформления заказа
+        self.items = {}
+
+
+class Order:
+    # Класс заказа, обрабатывающий покупку
+    def __init__(self, customer, cart, discount_rate=0.0, tax_rate=0.0):
+        self.customer = customer
+        self.items = cart.items.copy()
+        self.discount_rate = discount_rate
+        self.tax_rate = tax_rate
+        self.total_price = self.calculate_total()
+
+    def calculate_total(self):
+        # Рассчитывает итоговую цену с учетом скидок и налогов
+        subtotal = sum(product.price * qty for product, qty in self.items.items())
+        discount_amount = subtotal * self.discount_rate
+        price_after_discount = subtotal - discount_amount
+        tax_amount = price_after_discount * self.tax_rate
+        return price_after_discount + tax_amount
+
+    def process_purchase(self):
+        # Проводит оплату и списывает товары со склада
+        for product, qty in self.items.items():
+            if product.stock < qty:
+                print(f"Ошибка оформления: товара '{product.name}' не хватает на складе.")
+                return False
+        
+        for product, qty in self.items.items():
+            product.reduce_stock(qty)
+            
+        self.customer.add_order(self)
+        print(f"Заказ успешно оформлен! Итоговая сумма: {self.total_price:.2f} руб.")
+        return True
+
+
+class Customer:
+    # Класс пользователя (покупателя)
+    def __init__(self, name, email):
+        self.name = name
+        self.email = email
+        self.order_history = []
+        self.cart = ShoppingCart()
+
+    def add_order(self, order):
+        # Добавляет заказ в историю
+        self.order_history.append(order)
+
+    def view_history(self):
+        # Выводит историю заказов
+        print(f"\n--- История заказов для {self.name} ---")
+        if not self.order_history:
+            print("Заказов пока нет.")
+        for i, order in enumerate(self.order_history, 1):
+            print(f"Заказ #{i}: Сумма {order.total_price:.2f} руб. (Товаров: {sum(order.items.values())} шт.)")
+
+
+
+
+
+
+
+#практика 4
+class CrewMember:
+    # Класс, представляющий члена экипажа
+    def __init__(self, name, role, health=100):
+        self.name = name
+        self.role = role
+        self.health = health
+        self.skills = []
+
+    def add_skill(self, skill):
+        # Добавляет навык члену экипажа
+        if skill not in self.skills:
+            self.skills.append(skill)
+
+    def take_damage(self, damage):
+        # Получение урона
+        self.health = max(0, self.health - damage)
+        print(f"{self.name} получил {damage} урона. Здоровье: {self.health}")
+
+    def heal(self, amount):
+        # Восстановление здоровья
+        self.health = min(100, self.health + amount)
+        print(f"{self.name} восстановил здоровье. Текущее здоровье: {self.health}")
+
+
+class SpaceShip:
+    # Класс для управления космическим кораблем
+    def __init__(self, name, max_fuel=100):
+        self.name = name
+        self.fuel = max_fuel
+        self.max_fuel = max_fuel
+        self.hull_integrity = 100
+        self.current_speed = 0
+        self.crew = []
+
+    def add_crew_member(self, crew_member):
+        # Добавляет члена экипажа на корабль
+        self.crew.append(crew_member)
+
+    def accelerate(self, amount):
+        # Ускорение корабля с расходом топлива
+        fuel_needed = amount * 0.5
+        if self.fuel >= fuel_needed:
+            self.fuel -= fuel_needed
+            self.current_speed += amount
+            print(f"Корабль ускорился до {self.current_speed} км/с. Остаток топлива: {self.fuel:.1f}")
+        else:
+            print("Недостаточно топлива для ускорения!")
+
+    def decelerate(self, amount):
+        # Торможение корабля
+        self.current_speed = max(0, self.current_speed - amount)
+        print(f"Корабль замедлился до {self.current_speed} км/с.")
+
+    def take_damage(self, damage):
+        # Получение урона корпусом
+        self.hull_integrity = max(0, self.hull_integrity - damage)
+        print(f"Корпус корабля получил повреждения! Целостность: {self.hull_integrity}%")
+        if self.hull_integrity == 0:
+            print("КРИТИЧЕСКОЕ ПОВРЕЖДЕНИЕ! Корабль уничтожен.")
+
+    def refuel(self, amount):
+        # Заправка корабля
+        self.fuel = min(self.max_fuel, self.fuel + amount)
+        print(f"Корабль заправлен. Текущий уровень топлива: {self.fuel}")
+
+
+class Mission:
+    # Класс, определяющий миссию, цели, ресурсы и события
+    def __init__(self, name, ship, goals, resources):
+        self.name = name
+        self.ship = ship
+        self.goals = goals
+        self.resources = resources
+        self.events = [
+            "Встреча с астероидами",
+            "Отказ системы жизнеобеспечения",
+            "Обнаружение неизвестного сигнала",
+            "Утечка топлива"
+        ]
+        self.is_completed = False
+
+    def check_goals(self):
+        # Проверка выполнения целей миссии
+        print(f"Проверка целей миссии '{self.name}'...")
+        for goal in self.goals:
+            print(f" - {goal}: [В процессе/Не выполнено]")
+
+    def trigger_event(self, event_index):
+        # Запуск случайного или конкретного события
+        if 0 <= event_index < len(self.events):
+            event = self.events[event_index]
+            print(f"\n[СОБЫТИЕ]: {event}!")
+            
+            if event == "Встреча с астероидами":
+                self.ship.take_damage(20)
+            elif event == "Утечка топлива":
+                self.ship.fuel = max(0, self.ship.fuel - 30)
+                print(f"Потеряно 30 единиц топлива. Остаток: {self.ship.fuel}")
+            elif event == "Отказ системы жизнеобеспечения":
+                for member in self.ship.crew:
+                    member.take_damage(10)
+            elif event == "Обнаружение неизвестного сигнала":
+                print("Сигнал записан в журнал. Научная ценность миссии повышена.")
+        else:
+            print("Неверный индекс события.")
+
+    def complete_mission(self):
+        # Завершение миссии
+        self.is_completed = True
+        print(f"Миссия '{self.name}' успешно завершена!")
